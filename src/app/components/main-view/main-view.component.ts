@@ -1,5 +1,8 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
+import {MatIconRegistry} from '@angular/material';
+import {DomSanitizer} from '@angular/platform-browser';
+import {Subscribable, Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-main-view',
@@ -7,10 +10,14 @@ import {TranslateService} from '@ngx-translate/core';
   styleUrls: ['./main-view.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class MainViewComponent implements OnInit {
+export class MainViewComponent implements OnInit, OnDestroy {
+  private switchLanguageSubscription: Subscription;
 
-  constructor(private translate: TranslateService) {
+  constructor(private translate: TranslateService, iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
     translate.setDefaultLang('fr');
+    iconRegistry.addSvgIcon('england', sanitizer.bypassSecurityTrustResourceUrl('assets/img/england.svg'));
+    iconRegistry.addSvgIcon('france', sanitizer.bypassSecurityTrustResourceUrl('assets/img/france.svg'));
+    iconRegistry.addSvgIcon('translation', sanitizer.bypassSecurityTrustResourceUrl('assets/img/google.svg'));
   }
 
   switchLanguage(language: string) {
@@ -18,5 +25,11 @@ export class MainViewComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ngOnDestroy(): void {
+    if (this.switchLanguageSubscription) {
+      this.switchLanguageSubscription.unsubscribe();
+    }
   }
 }

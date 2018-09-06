@@ -1,6 +1,24 @@
 {
   "Title": "Ma super TODO list",
-  "TabFirstItem": "Détail",
-  "TabSecondItem": "Aperçu",
-  "TabThirdItem": "Créer"
+  "TabFirstItem": "Aperçu",
+  "TabSecondItem": "Créer/Modifier",
+  "TodoListTableFirstCol": "Statut",
+  "TodoListTableSecondCol": "Sujet",
+  "TodoListTableThirdCol": "Criticité",
+  "TodoListTableFourthCol": "Actions",
+  "UrgentCriticity": "Immédiat",
+  "HighCriticty": "Urgent",
+  "NormalCriticty": "Normal",
+  "LowCriticty": "Faible",
+  "DisplayAllTasks": "Toutes les tâches",
+  "DisplayToDo": "Tâches à faire",
+  "DisplayComplete": "Tâches accomplies",
+  "NoTodo": "Il n'y a pas de tâches",
+  "TaskCounterLabel": "Tâche{count, plural, =0{} one{} other{s}}: {count}",
+  "FrenchLabel": "Français",
+  "EnglishLabel": "Anglais",
+  "PaginatorItemsPerPageLabel": "Elements par page",
+  "PaginatorNextPageLabel": "Page suivante",
+  "PaginatorPreviousPageLabel": "Page précédente",
+  "PaginatorOnLabel": "sur"
 }

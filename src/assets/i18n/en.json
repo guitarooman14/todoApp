@@ -1,6 +1,24 @@
 {
   "Title": "My awesome TODO list app",
-  "TabFirstItem": "Details",
-  "TabSecondItem": "Overview",
-  "TabThirdItem": "Create"
+  "TabFirstItem": "Overview",
+  "TabSecondItem": "Create/Modify",
+  "TodoListTableFirstCol": "Status",
+  "TodoListTableSecondCol": "Subject",
+  "TodoListTableThirdCol": "Criticity",
+  "TodoListTableFourthCol": "Actions",
+  "UrgentCriticity": "Immediatly",
+  "HighCriticty": "High",
+  "NormalCriticty": "Normal",
+  "LowCriticty": "Low",
+  "DisplayAllTasks": "All tasks",
+  "DisplayToDo": "To do",
+  "DisplayComplete": "Complete",
+  "NoTodo": "There are no tasks",
+  "TaskCounterLabel": "Task{count, plural, =0{} one{} other{s}}: {count}",
+  "FrenchLabel": "French",
+  "EnglishLabel": "English",
+  "PaginatorItemsPerPageLabel": "Items per page",
+  "PaginatorNextPageLabel": "Next page",
+  "PaginatorPreviousPageLabel": "Previous page",
+  "PaginatorOnLabel": "on"
 }
