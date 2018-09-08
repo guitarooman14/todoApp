@@ -1,0 +1,41 @@
+#menu {
+  background-color: #673ab7;
+  color: #FFF;
+  margin: 0;
+  padding: 5px 0;
+  height: 38px;
+}
+
+#menu a {
+  color: #FFF;
+  padding: 5px;
+  border-radius: 3px;
+  background-color: #a46eff;
+  cursor: pointer;
+}
+
+
+a {
+  color: #337ab7;
+  text-decoration: none;
+}
+
+#menu li {
+  display: inline;
+}
+
+#menu ul {
+  margin: 0;
+  padding: 5px 0;
+  text-align: center;
+}
+
+ul {
+  list-style-type: none;
+}
+
+#todo-app-no-todo > h2 {
+  font-size: 36px;
+  text-align: center;
+  height: 300px;
+}

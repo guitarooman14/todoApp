@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {AbstractTodoService} from './abstract-todo.service';
-import {ITodoListModel} from '../model/i-todolist-model';
+import {ITodoListModel} from '../../model/i-todolist-model';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 

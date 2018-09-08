@@ -20,5 +20,13 @@
   "PaginatorItemsPerPageLabel": "Elements par page",
   "PaginatorNextPageLabel": "Page suivante",
   "PaginatorPreviousPageLabel": "Page précédente",
-  "PaginatorOnLabel": "sur"
+  "PaginatorOnLabel": "sur",
+  "TitleRequiredErrorLabel": "Vous devez entrer une valeur",
+  "TitleFormPlaceHolder": "Ajouter le nom de votre tâche",
+  "DescriptionFormPlaceHolder": "Description",
+  "CriticityFormPlaceHolder": "Criticité",
+  "CriticityRequiredErrorLabel": "Vous devez séléctionner une des options",
+  "AddNewTaskLabel": "Ajouter une nouvelle tâche",
+  "ModifyTaskLabel": "Modifier cette tâche",
+  "TaskNotFound": "La tâche que vous recherchez n'existe pas"
 }

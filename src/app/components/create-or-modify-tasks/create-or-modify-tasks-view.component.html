@@ -1,0 +1,39 @@
+<nav id="menu">
+  <ul>
+    <li>
+      <a routerLink="/dashboard">
+        <mat-icon svgIcon="list"></mat-icon>
+        {{'DisplayAllTasks' | translate}}</a>
+    </li>
+  </ul>
+</nav>
+<div class="container">
+  <mat-progress-bar *ngIf="!dataLoaded" id="progressBar" mode="indeterminate"></mat-progress-bar>
+  <div id="overlay" [@visibilityChanged]="dataLoaded">
+    <form [formGroup]="createModifyForm" (ngSubmit)="submit()" class="todoForm">
+      <mat-form-field>
+        <input matInput placeholder="{{'TitleFormPlaceHolder' | translate}}" [formControl]="title" required>
+        <mat-error *ngIf="title.invalid">{{getErrorMessage('title')}}</mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <textarea matInput placeholder="{{'DescriptionFormPlaceHolder' | translate}}"
+                  [formControl]="description"></textarea>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-select matInput placeholder="{{'CriticityFormPlaceHolder' | translate}}" [formControl]="criticity"
+                    required>
+          <mat-option value="0">{{'LowCriticty' | translate}}</mat-option>
+          <mat-option value="1">{{'NormalCriticty' | translate}}</mat-option>
+          <mat-option value="2">{{'HighCriticty' | translate}}</mat-option>
+          <mat-option value="3">{{'UrgentCriticity' | translate}}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="criticity.invalid">{{getErrorMessage('criticity')}}</mat-error>
+      </mat-form-field>
+      <button mat-raised-button id="form-submit-button" color="primary" type="submit">{{createOrModifybuttonLabel |
+        translate}}
+      </button>
+    </form>
+  </div>
+</div>

@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {AbstractTodoService} from './abstract-todo.service';
 import {Observable, of} from 'rxjs';
-import {Criticity, ITodoListModel} from '../model/i-todolist-model';
+import {Criticity, ITodoListModel} from '../../model/i-todolist-model';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +22,7 @@ export class MockedTodoService extends AbstractTodoService {
       description: 'Haltéro cours spécifique',
       criticity: Criticity.URGENT
     }];
+
   constructor() {
     super();
   }

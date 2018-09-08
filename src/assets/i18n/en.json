@@ -20,5 +20,13 @@
   "PaginatorItemsPerPageLabel": "Items per page",
   "PaginatorNextPageLabel": "Next page",
   "PaginatorPreviousPageLabel": "Previous page",
-  "PaginatorOnLabel": "on"
+  "PaginatorOnLabel": "on",
+  "TitleRequiredErrorLabel": "You must enter a value",
+  "TitleFormPlaceHolder": "Enter the name of your task",
+  "DescriptionFormPlaceHolder": "Details",
+  "CriticityFormPlaceHolder": "Criticity",
+  "CriticityRequiredErrorLabel": "You have to choose one option",
+  "AddNewTaskLabel": "Add a new task",
+  "ModifyTaskLabel": "Modify this task",
+  "TaskNotFound": "The task you're looking for doesn't exist"
 }

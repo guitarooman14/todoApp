@@ -17,7 +17,7 @@ export class CriticityPipe implements PipeTransform {
       case Criticity.URGENT:
         resultat = this.translateService.instant('UrgentCriticity');
         break;
-      case Criticity.HIGHT:
+      case Criticity.HIGH:
         resultat = this.translateService.instant('HighCriticty');
         break;
       case Criticity.NORMAL:
@@ -29,5 +29,4 @@ export class CriticityPipe implements PipeTransform {
     }
     return resultat;
   }
-
 }
