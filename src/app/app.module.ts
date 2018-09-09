@@ -18,20 +18,18 @@ import {
 import {CriticityPipe} from './pipes/criticity/criticity.pipe';
 import {MESSAGE_FORMAT_CONFIG, TranslateMessageFormatCompiler} from 'ngx-translate-messageformat-compiler';
 import {AbstractTodoService} from './services/get-data/abstract-todo.service';
-import {TodoServiceService} from './services/get-data/todo-service.service';
+import {TodoService} from './services/get-data/todo.service';
 import {MockedTodoService} from './services/get-data/mocked-todo.service';
 import {MatPaginatorIntlCro} from './business/mat-paginator-customized-label';
 import {CreateOrModifyTasksComponent} from './components/create-or-modify-tasks/create-or-modify-tasks-view.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {WebStorageModule} from 'ngx-store';
 import {NotFoundTaskComponent} from './components/not-found-task/not-found-task.component';
+import {environment} from '../environments/environment';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
 }
-
-// we just have to change this constant when going to prod
-const IS_PROD = true;
 
 @NgModule({
   declarations: [
@@ -82,7 +80,7 @@ const IS_PROD = true;
     },
     {
       provide: AbstractTodoService,
-      useClass: IS_PROD ? TodoServiceService : MockedTodoService
+      useClass: environment.production ? TodoService : MockedTodoService
     },
     {
       provide: MatPaginatorIntl,

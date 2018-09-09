@@ -9,10 +9,3 @@ export interface ITodoListModel {
 export enum Criticity {
   LOW, NORMAL, HIGH, URGENT
 }
-
-export namespace Criticity {
-
-  export function parse(criticity: string): Criticity {
-    return Criticity[criticity];
-  }
-}

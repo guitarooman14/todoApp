@@ -7,7 +7,7 @@ import {HttpClient} from '@angular/common/http';
 @Injectable({
   providedIn: 'root'
 })
-export class TodoServiceService extends AbstractTodoService {
+export class TodoService extends AbstractTodoService {
 
   constructor(private http: HttpClient) {
     super();
