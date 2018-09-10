@@ -23,6 +23,7 @@ export class MatPaginatorIntlCro extends MatPaginatorIntl {
 
   injectTranslateService(translate: TranslateService) {
     this.translate = translate;
+    this.translateLabels();
 
     this.translate.onLangChange.subscribe(() => {
       this.translateLabels();

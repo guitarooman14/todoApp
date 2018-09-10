@@ -7,7 +7,7 @@ import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {HttpLoaderFactory} from '../../app.module';
 import {MatPaginatorIntlCro} from '../../business/mat-paginator-customized-label';
 import {MatPaginatorIntl} from '@angular/material';
-import {Criticity} from '../../model/i-todolist-model';
+import {Criticity} from '../../business/store/models/i-todolist-model';
 
 describe('CriticityPipe', () => {
   let pipe: CriticityPipe;

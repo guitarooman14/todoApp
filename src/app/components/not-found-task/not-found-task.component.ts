@@ -12,5 +12,4 @@ export class NotFoundTaskComponent implements OnInit {
 
   ngOnInit() {
   }
-
 }

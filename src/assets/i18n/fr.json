@@ -28,5 +28,6 @@
   "CriticityRequiredErrorLabel": "Vous devez séléctionner une des options",
   "AddNewTaskLabel": "Ajouter une nouvelle tâche",
   "ModifyTaskLabel": "Modifier cette tâche",
-  "TaskNotFound": "La tâche que vous recherchez n'existe pas"
+  "TaskNotFound": "La tâche que vous recherchez n'existe pas",
+  "LoadingTodoList": "Chargement des tâches en cours"
 }

@@ -28,5 +28,6 @@
   "CriticityRequiredErrorLabel": "You have to choose one option",
   "AddNewTaskLabel": "Add a new task",
   "ModifyTaskLabel": "Modify this task",
-  "TaskNotFound": "The task you're looking for doesn't exist"
+  "TaskNotFound": "The task you're looking for doesn't exist",
+  "LoadingTodoList": "loading tasks in progress"
 }

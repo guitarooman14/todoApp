@@ -2,7 +2,7 @@ import {inject, TestBed} from '@angular/core/testing';
 
 import {TodoService} from './todo.service';
 import {of, Subscription} from 'rxjs';
-import {Criticity, ITodoListModel} from '../../model/i-todolist-model';
+import {Criticity, ITodoListModel} from '../../business/store/models/i-todolist-model';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
 
 describe('TodoService', () => {

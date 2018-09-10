@@ -15,11 +15,18 @@
     </li>
   </ul>
 </nav>
-<div id="todo-app-no-todo" *ngIf="!isLoading && dataSource.data.length === 0">
+
+<div id="loading" *ngIf="tasksLoading | async">
+  <mat-progress-bar  id="progressBar" mode="indeterminate"></mat-progress-bar>
+  <h2>{{ 'LoadingTodoList' | translate}}</h2>
+</div>
+
+<div id="todo-app-no-todo" *ngIf="!isLoadingStatic && dataSource?.data.length === 0">
   <h2>{{ 'NoTodo' | translate}}</h2>
   <button (click)="goToCreateTaskView()" mat-raised-button color="primary">{{ 'AddNewTaskLabel' | translate}}</button>
 </div>
-<div [hidden]="isLoading || !isLoading && dataSource.data.length === 0">
+
+<div [@visibilityChanged]="!isLoadingStatic" [hidden]="isLoadingStatic || !isLoadingStatic && dataSource?.data.length === 0">
   <!-- There is a bug if we try to use the ngif directive. The MatSort component is always undefined -->
   <table mat-table matSort [dataSource]="dataSource" class="mat-elevation-z8 todo-list-table"
          (matSortChange)="sortData($event)">
@@ -48,9 +55,10 @@
     <ng-container matColumnDef="action">
       <th mat-header-cell *matHeaderCellDef> {{'TodoListTableFourthCol' | translate }}</th>
       <td mat-cell *matCellDef="let element">
-        <span><button mat-icon-button (click)="deleteRowDataTable(element.id, paginator)"><mat-icon
+        <span><button mat-icon-button (click)="deleteRowDataTable(element.id)"><mat-icon
           svgIcon="remove"></mat-icon></button></span>
-        <span><button (click)="goToDetailView(element.id)" mat-icon-button><mat-icon svgIcon="more-details"></mat-icon></button></span>
+        <span><button (click)="goToDetailView(element.id)" mat-icon-button><mat-icon
+          svgIcon="more-details"></mat-icon></button></span>
       </td>
     </ng-container>
 
@@ -62,7 +70,8 @@
 
   </table>
   <div id="paginator-new-task-wrapper">
-    <button (click)="goToCreateTaskView()" mat-raised-button color="primary">{{ 'AddNewTaskLabel' | translate}}</button>
+    <button (click)="goToCreateTaskView()" mat-raised-button color="primary">{{ 'AddNewTaskLabel' | translate}}
+    </button>
     <mat-paginator #paginator
                    [length]="dataSource?.data.length"
                    [pageIndex]="0"

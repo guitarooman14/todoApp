@@ -6,6 +6,12 @@ export interface ITodoListModel {
   criticity: Criticity;
 }
 
+export interface ITodoListState {
+  data: ITodoListModel[];
+  loading: boolean;
+  loaded: boolean;
+}
+
 export enum Criticity {
   LOW, NORMAL, HIGH, URGENT
 }

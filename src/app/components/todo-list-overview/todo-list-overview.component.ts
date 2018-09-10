@@ -1,52 +1,64 @@
-import {AfterViewChecked, ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {MatPaginator, MatSort, MatTableDataSource, Sort} from '@angular/material';
 import {SelectionModel} from '@angular/cdk/collections';
-import {ITodoListModel} from '../../model/i-todolist-model';
-import {AbstractTodoService} from '../../services/get-data/abstract-todo.service';
-import {Subscription} from 'rxjs';
-import {SharedStorage} from 'ngx-store';
+import {Observable, Subscription} from 'rxjs';
 import {Router} from '@angular/router';
+import {select, Store} from '@ngrx/store';
+import {ITodoListModel} from '@Models/i-todolist-model';
+import {AbstractTodoService} from '@Services/get-data/abstract-todo.service';
+import {AppState} from '@StoreConfig';
+import {TodoListModule} from '@Actions/todo-list.action';
+import {selectTodosLoading$} from '@Selectors/todo-list.selector';
+import {fadeInTransition} from '../../render/animations/animations';
 
 @Component({
   selector: 'app-todo-list-overview',
   templateUrl: './todo-list-overview.component.html',
-  styleUrls: ['./todo-list-overview.component.scss']
+  styleUrls: ['./todo-list-overview.component.scss'],
+  animations: [fadeInTransition],
+  encapsulation: ViewEncapsulation.None
 })
-export class TodoListOverviewComponent implements AfterViewChecked, OnDestroy {
+export class TodoListOverviewComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  @SharedStorage('toDoListItems') toDoListItems: Array<ITodoListModel>;
-
-  private dataLoaded = false;
-  private getTasksSubscription: Subscription;
   public displayedColumns: string[] = ['status', 'title', 'criticity', 'action'];
   public isLoading = true;
   public dataSource: MatTableDataSource<ITodoListModel>;
   public selection = new SelectionModel<ITodoListModel>(true, []);
+  public tasksLoading: Observable<boolean>;
+  public isLoadingStatic: boolean;
+  public toDoListItemsWithRedux: Observable<ITodoListModel[]>;
+  private getTasksSubscription: Subscription;
+  private isLoadingSubscription: Subscription;
 
   constructor(private todoService: AbstractTodoService,
-              private cdr: ChangeDetectorRef,
-              private router: Router) {
+              private router: Router,
+              private store: Store<AppState>) {
+    this.tasksLoading = store.pipe(select(selectTodosLoading$));
+    this.toDoListItemsWithRedux = this.store.pipe(select((state) => state.tasks.data));
+    this.isLoadingStatic = true;
   }
 
-  ngAfterViewChecked(): void {
-    if (this.toDoListItems && !this.dataLoaded) {
-      this.dataSource = new MatTableDataSource<ITodoListModel>(this.toDoListItems);
-      // default sort: the completed tasks are placed in the bottom of the list
+  ngOnInit(): void {
+    this.isLoadingSubscription = this.tasksLoading.subscribe((isLoading: boolean) => {
+      this.isLoadingStatic = isLoading;
+    });
+    this.getTasksSubscription = this.toDoListItemsWithRedux.subscribe((tasks: ITodoListModel[]) => {
+      this.dataSource = new MatTableDataSource<ITodoListModel>(tasks);
+      // default sort: the completed todo are placed in the bottom of the list
       this.setDefaultSort();
       this.dataSource.sort = this.sort;
       this.dataSource.paginator = this.paginator;
       this.isLoading = false;
-      // In order to avoid the ExpressionChangedAfterItHasBeenCheckedError
-      // we have to defined when the component should detect changes
-      this.cdr.detectChanges();
-      this.dataLoaded = true;
-    }
+    });
   }
 
   ngOnDestroy(): void {
     if (this.getTasksSubscription) {
       this.getTasksSubscription.unsubscribe();
+    }
+    if (this.isLoadingSubscription) {
+      this.isLoadingSubscription.unsubscribe();
     }
   }
 
@@ -68,9 +80,6 @@ export class TodoListOverviewComponent implements AfterViewChecked, OnDestroy {
     // we  have to modify manually the datasource
     // If a filter has been applied
     if (this.dataSource.filter.length > 0) {
-      /*const id = this.dataSource.data.findIndex((item: ITodoListModel) => {
-        return item.id === task.id;
-      });*/
       const itemToModify = this.dataSource.data.find((item: ITodoListModel) => {
         return item.id === task.id;
       });
@@ -91,11 +100,14 @@ export class TodoListOverviewComponent implements AfterViewChecked, OnDestroy {
   }
 
   public resetFilter() {
+    const isFilterAlreadyEmpty = this.dataSource.filter === '' ? true : false;
     this.dataSource.filter = '';
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
-    this.sortData(this.sort);
+    if (!isFilterAlreadyEmpty) {
+      this.sortData(this.sort);
+    }
   }
 
   public filterAlreadyDoneTask() {
@@ -108,14 +120,12 @@ export class TodoListOverviewComponent implements AfterViewChecked, OnDestroy {
     this.applyFilter('false');
   }
 
-  public deleteRowDataTable(itemId: number, paginator: MatPaginator) {
-    const itemIndex = this.dataSource.data.findIndex(
-      (obj: ITodoListModel) => obj.id === itemId);
-    this.toDoListItems.splice(itemIndex, 1);
-    this.dataSource.data = this.toDoListItems;
-    // this.dataSource.data.splice(itemIndex, 1);
-    // Allow to refresh the view after remove the data in datasource
-    this.dataSource.paginator = paginator;
+  public deleteRowDataTable(itemId: number) {
+    this.store.dispatch(new TodoListModule.RemoveTask(itemId));
+    // We have to navigate to previous page if we are going to delete the last row of the current page
+    if (this.dataSource.paginator.hasPreviousPage() && this.dataSource.paginator.pageSize === 1) {
+      this.dataSource.paginator.previousPage();
+    }
   }
 
   private compare(a, b, isAsc) {
@@ -134,7 +144,7 @@ export class TodoListOverviewComponent implements AfterViewChecked, OnDestroy {
         this.setDefaultSort();
       }
     } else {
-      dataToManage = dataToManage.sort((a, b) => {
+      dataToManage.sort((a, b) => {
         const isAsc = sort.direction === 'asc';
         switch (sort.active) {
           case 'status':
@@ -147,16 +157,11 @@ export class TodoListOverviewComponent implements AfterViewChecked, OnDestroy {
             return 0;
         }
       });
-      if (this.dataSource.filter.length > 0) {
-        this.dataSource.filteredData = dataToManage;
-      } else {
-        this.dataSource.data = dataToManage;
-      }
     }
   }
 
   private setDefaultSort() {
-    // default sort: the completed tasks are placed in the bottom of the list
+    // default sort: the completed todo are placed in the bottom of the list
     this.dataSource.data = this.dataSource.data.sort(
       (a: ITodoListModel, b: ITodoListModel) => {
         return (a.status < b.status ? -1 : 1);

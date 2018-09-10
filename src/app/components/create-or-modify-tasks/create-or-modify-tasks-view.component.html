@@ -8,8 +8,8 @@
   </ul>
 </nav>
 <div class="container">
-  <mat-progress-bar *ngIf="!dataLoaded" id="progressBar" mode="indeterminate"></mat-progress-bar>
-  <div id="overlay" [@visibilityChanged]="dataLoaded">
+  <mat-progress-bar *ngIf="tasksLoading | async" id="progressBar" mode="indeterminate">toto</mat-progress-bar>
+  <div id="overlay" [@visibilityChanged]="!isLoadingStatic" >
     <form [formGroup]="createModifyForm" (ngSubmit)="submit()" class="todoForm">
       <mat-form-field>
         <input matInput placeholder="{{'TitleFormPlaceHolder' | translate}}" [formControl]="title" required>

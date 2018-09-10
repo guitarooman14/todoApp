@@ -1,5 +1,5 @@
 import {Pipe, PipeTransform} from '@angular/core';
-import {Criticity} from '../../model/i-todolist-model';
+import {Criticity} from '../../business/store/models/i-todolist-model';
 import {TranslateService} from '@ngx-translate/core';
 
 @Pipe({

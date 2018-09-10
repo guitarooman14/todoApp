@@ -23,9 +23,12 @@ import {MockedTodoService} from './services/get-data/mocked-todo.service';
 import {MatPaginatorIntlCro} from './business/mat-paginator-customized-label';
 import {CreateOrModifyTasksComponent} from './components/create-or-modify-tasks/create-or-modify-tasks-view.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {WebStorageModule} from 'ngx-store';
 import {NotFoundTaskComponent} from './components/not-found-task/not-found-task.component';
 import {environment} from '../environments/environment';
+import {StoreModule} from '@ngrx/store';
+import {appEffects, getReducers, REDUCER_TOKEN} from './business/store';
+import {EffectsModule} from '@ngrx/effects';
+import {IsTodosLoadedGuard} from '@Services/guards/is-todos-loaded.guard';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -59,9 +62,10 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatSelectModule,
     ReactiveFormsModule,
     MatInputModule,
-    WebStorageModule,
     MatProgressBarModule,
     FormsModule,
+    StoreModule.forRoot(REDUCER_TOKEN),
+    EffectsModule.forRoot(appEffects),
     TranslateModule.forRoot({
       compiler: {
         provide: TranslateCompiler,
@@ -75,6 +79,10 @@ export function HttpLoaderFactory(http: HttpClient) {
     })
   ],
   providers: [
+    {
+      provide: REDUCER_TOKEN,
+      useFactory: getReducers
+    },
     {
       provide: MESSAGE_FORMAT_CONFIG, useValue: {locales: ['en', 'fr']}
     },
@@ -91,6 +99,8 @@ export function HttpLoaderFactory(http: HttpClient) {
       },
       deps: [TranslateService]
     }
+    ,
+    IsTodosLoadedGuard
   ],
   bootstrap: [AppComponent]
 })

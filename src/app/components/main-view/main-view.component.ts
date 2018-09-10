@@ -3,9 +3,10 @@ import {TranslateService} from '@ngx-translate/core';
 import {MatIconRegistry, MatTabGroup} from '@angular/material';
 import {DomSanitizer} from '@angular/platform-browser';
 import {Subscription} from 'rxjs';
-import {SharedStorage} from 'ngx-store';
-import {ITodoListModel} from '../../model/i-todolist-model';
-import {AbstractTodoService} from '../../services/get-data/abstract-todo.service';
+import {Store} from '@ngrx/store';
+import {TodoListModule} from '@Actions/todo-list.action';
+import {AppState} from '@StoreConfig';
+import {AbstractTodoService} from '@Services/get-data/abstract-todo.service';
 
 @Component({
   selector: 'app-main-view',
@@ -15,13 +16,11 @@ import {AbstractTodoService} from '../../services/get-data/abstract-todo.service
 })
 export class MainViewComponent implements OnInit, OnDestroy {
   @ViewChild('tabGroup') tabGroup: MatTabGroup;
-  // it will be kept in temp memory until app reload
-  @SharedStorage() toDoListItems: Array<ITodoListModel> = null;
   private switchLanguageSubscription: Subscription;
-  private getTasksSubscription: Subscription;
 
   constructor(private todoService: AbstractTodoService,
               private translate: TranslateService,
+              private store: Store<AppState>,
               iconRegistry: MatIconRegistry,
               sanitizer: DomSanitizer) {
     translate.setDefaultLang('fr');
@@ -41,9 +40,7 @@ export class MainViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.getTasksSubscription = this.todoService.listTask().subscribe((tasks: ITodoListModel[]) => {
-      this.toDoListItems = tasks;
-    });
+    this.store.dispatch(new TodoListModule.LoadInitTasks());
   }
 
   ngOnDestroy(): void {

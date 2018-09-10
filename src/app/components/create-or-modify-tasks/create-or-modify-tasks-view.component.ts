@@ -1,66 +1,56 @@
-import {AfterViewChecked, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {TranslateService} from '@ngx-translate/core';
-import {ITodoListModel} from '../../model/i-todolist-model';
+import {ITodoListModel} from '@Models/i-todolist-model.ts';
 import {ActivatedRoute, Router} from '@angular/router';
-import {SharedStorage} from 'ngx-store';
-import {animate, state, style, transition, trigger} from '@angular/animations';
+import {AppState} from '@StoreConfig';
+import {select, Store} from '@ngrx/store';
+import {Observable, Subscription} from 'rxjs';
+import {TodoListModule} from '@Actions/todo-list.action';
+import {selectTodosLoading$} from '@Selectors/todo-list.selector';
+import {fadeInTransition} from '../../render/animations/animations';
 
 @Component({
   selector: 'app-create-or-modify-tasks',
   templateUrl: './create-or-modify-tasks-view.component.html',
   styleUrls: ['./create-or-modify-tasks-view.component.scss'],
-  animations: [
-    trigger('visibilityChanged', [
-      state('true', style({opacity: 1})),
-      state('false', style({opacity: 0})),
-      transition('1 => 0', animate('300ms')),
-      transition('0 => 1', animate('900ms'))
-    ])]
+  animations: [fadeInTransition]
 })
-export class CreateOrModifyTasksComponent implements AfterViewChecked, OnInit {
+export class CreateOrModifyTasksComponent implements OnInit, OnDestroy {
   @ViewChild(FormGroupDirective) formGroupDirective;
-  @SharedStorage('toDoListItems') toDoListItems: Array<ITodoListModel>;
   public title = new FormControl('', [Validators.required]);
   public description = new FormControl('');
   public criticity = new FormControl('', Validators.required);
   public createOrModifybuttonLabel: string;
-  public dataLoaded = false;
   public createModifyForm: FormGroup;
   private titleRequiredErrorLabel: string;
   private critictyRequiredErrorLabel: string;
+  public tasksLoading: Observable<boolean>;
+  public toDoListItemsWithRedux: Observable<ITodoListModel[]>;
+  // TODO only usefull for trigger the animation.
+  // Find another solution to bind the trigger animation to the loading observer
+  public isLoadingStatic: boolean;
+  private getTasksSubscription: Subscription;
+  private isLoadingSubscription: Subscription;
+  private toDoListItems: ITodoListModel[];
   private viewMode: ViewType;
 
   constructor(private translate: TranslateService,
               private formBuilder: FormBuilder,
               private router: Router,
               private route: ActivatedRoute,
-              private cdr: ChangeDetectorRef) {
+              private store: Store<AppState>) {
+    this.tasksLoading = store.pipe(select(selectTodosLoading$));
+    this.toDoListItemsWithRedux = this.store.pipe(select((rState) => rState.tasks.data));
+    this.isLoadingStatic = true;
   }
 
-
-  ngAfterViewChecked(): void {
-    if (this.toDoListItems && !this.dataLoaded) {
-      if (this.route.snapshot.paramMap.has('id')) {
-        this.viewMode = ViewType.MODIFY;
-        const id = this.route.snapshot.paramMap.get('id');
-        const task: ITodoListModel = this.toDoListItems.find((item: ITodoListModel) => {
-          return item.id === +id;
-        });
-        if (task) {
-          this.translateLabels(ViewType.MODIFY);
-          this.title.setValue(task.title);
-          this.description.setValue(task.description);
-          this.criticity.setValue('' + task.criticity);
-        } else {
-          this.router.navigate(['/dashboard/404']);
-        }
-      } else {
-        this.viewMode = ViewType.CREATE;
-        this.translateLabels(ViewType.CREATE);
-      }
-      this.dataLoaded = true;
-      this.cdr.detectChanges();
+  ngOnDestroy(): void {
+    if (this.getTasksSubscription) {
+      this.getTasksSubscription.unsubscribe();
+    }
+    if (this.isLoadingSubscription) {
+      this.isLoadingSubscription.unsubscribe();
     }
   }
 
@@ -81,6 +71,34 @@ export class CreateOrModifyTasksComponent implements AfterViewChecked, OnInit {
 
     this.translate.onDefaultLangChange.subscribe(() => {
       this.translateLabels(type);
+    });
+
+    this.isLoadingSubscription = this.tasksLoading.subscribe((isLoading: boolean) => {
+      this.isLoadingStatic = isLoading;
+    });
+
+    this.getTasksSubscription = this.toDoListItemsWithRedux.subscribe((tasks: ITodoListModel[]) => {
+      if (!this.isLoadingStatic) {
+        this.toDoListItems = tasks;
+        if (this.route.snapshot.paramMap.has('id')) {
+          this.viewMode = ViewType.MODIFY;
+          const id = this.route.snapshot.paramMap.get('id');
+          const task: ITodoListModel = this.toDoListItems.find((item: ITodoListModel) => {
+            return item.id === +id;
+          });
+          if (task) {
+            this.translateLabels(ViewType.MODIFY);
+            this.title.setValue(task.title);
+            this.description.setValue(task.description);
+            this.criticity.setValue('' + task.criticity);
+          } else {
+            this.router.navigate(['/dashboard/404']);
+          }
+        } else {
+          this.viewMode = ViewType.CREATE;
+          this.translateLabels(ViewType.CREATE);
+        }
+      }
     });
   }
 
@@ -118,7 +136,7 @@ export class CreateOrModifyTasksComponent implements AfterViewChecked, OnInit {
         description: this.description.value,
         criticity: +this.criticity.value
       };
-      this.toDoListItems.push(newTask);
+      this.store.dispatch(new TodoListModule.AddTask(newTask));
     } else {
       const id = this.route.snapshot.paramMap.get('id');
       const task: ITodoListModel = this.toDoListItems.find((item: ITodoListModel) => {
@@ -128,7 +146,6 @@ export class CreateOrModifyTasksComponent implements AfterViewChecked, OnInit {
       task.description = this.description.value;
       task.title = this.title.value;
     }
-    // this.sharedService.addNewTask(newTask);
     // We have to use the formGroupDirective in order to
     // remove all controls data and invalid status
     if (this.formGroupDirective) {
