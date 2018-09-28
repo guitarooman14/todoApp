@@ -5,55 +5,52 @@ import {Observable, Subscription} from 'rxjs';
 import {Router} from '@angular/router';
 import {select, Store} from '@ngrx/store';
 import {ITodoListModel} from '@Models/i-todolist-model';
-import {AbstractTodoService} from '@Services/get-data/abstract-todo.service';
 import {AppState} from '@StoreConfig';
 import {TodoListModule} from '@Actions/todo-list.action';
-import {selectTodosLoading$} from '@Selectors/todo-list.selector';
-import {fadeInTransition} from '../../render/animations/animations';
+import {selectTodoListData$, selectTodosLoading$} from '@Selectors/todo-list.selector';
+import {fadeInAnimation, visibilityChangedTransition} from '../../render/animations/animations';
+import {filterEmpty} from '../../shared/utils/custom-operator';
 
 @Component({
   selector: 'app-todo-list-overview',
   templateUrl: './todo-list-overview.component.html',
   styleUrls: ['./todo-list-overview.component.scss'],
-  animations: [fadeInTransition],
+  animations: [visibilityChangedTransition, fadeInAnimation],
   encapsulation: ViewEncapsulation.None
 })
 export class TodoListOverviewComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   public displayedColumns: string[] = ['status', 'title', 'criticity', 'action'];
-  public isLoading = true;
+  public isLoading: boolean;
   public dataSource: MatTableDataSource<ITodoListModel>;
   public selection = new SelectionModel<ITodoListModel>(true, []);
   public tasksLoading: Observable<boolean>;
-  public isLoadingStatic: boolean;
   public toDoListItemsWithRedux: Observable<ITodoListModel[]>;
   private getTasksSubscription: Subscription;
   private isLoadingSubscription: Subscription;
 
-  constructor(private todoService: AbstractTodoService,
-              private router: Router,
-              private store: Store<AppState>) {
-    this.tasksLoading = store.pipe(select(selectTodosLoading$));
-    this.toDoListItemsWithRedux = this.store.pipe(select((state) => state.tasks.data));
-    this.isLoadingStatic = true;
+  constructor(private router: Router,
+    private store: Store<AppState>) {
+    this.tasksLoading = this.store.pipe(select(selectTodosLoading$));
+    this.toDoListItemsWithRedux = this.store.pipe(filterEmpty(), select(selectTodoListData$));
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.isLoadingSubscription = this.tasksLoading.subscribe((isLoading: boolean) => {
-      this.isLoadingStatic = isLoading;
+      this.isLoading = isLoading;
     });
+
     this.getTasksSubscription = this.toDoListItemsWithRedux.subscribe((tasks: ITodoListModel[]) => {
       this.dataSource = new MatTableDataSource<ITodoListModel>(tasks);
       // default sort: the completed todo are placed in the bottom of the list
       this.setDefaultSort();
       this.dataSource.sort = this.sort;
       this.dataSource.paginator = this.paginator;
-      this.isLoading = false;
     });
   }
 
-  ngOnDestroy(): void {
+  public ngOnDestroy(): void {
     if (this.getTasksSubscription) {
       this.getTasksSubscription.unsubscribe();
     }
@@ -62,7 +59,7 @@ export class TodoListOverviewComponent implements OnInit, OnDestroy {
     }
   }
 
-  applyFilter(filterValue: string) {
+  public applyFilter(filterValue: string) {
     const tableFilters = [];
     tableFilters.push({
       id: 'status',
@@ -100,7 +97,7 @@ export class TodoListOverviewComponent implements OnInit, OnDestroy {
   }
 
   public resetFilter() {
-    const isFilterAlreadyEmpty = this.dataSource.filter === '' ? true : false;
+    const isFilterAlreadyEmpty = !this.dataSource.filter;
     this.dataSource.filter = '';
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
@@ -111,12 +108,12 @@ export class TodoListOverviewComponent implements OnInit, OnDestroy {
   }
 
   public filterAlreadyDoneTask() {
-    this.dataSource.filterPredicate = (data: ITodoListModel, filter: string) => data.status;
+    this.dataSource.filterPredicate = (data: ITodoListModel) => data.status;
     this.applyFilter('true');
   }
 
   public filterNotDoneYetTask() {
-    this.dataSource.filterPredicate = (data: ITodoListModel, filter: string) => !data.status;
+    this.dataSource.filterPredicate = (data: ITodoListModel) => !data.status;
     this.applyFilter('false');
   }
 
@@ -128,11 +125,7 @@ export class TodoListOverviewComponent implements OnInit, OnDestroy {
     }
   }
 
-  private compare(a, b, isAsc) {
-    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
-  }
-
-  sortData(sort: Sort) {
+  public sortData(sort: Sort) {
     let dataToManage: ITodoListModel[];
     if (this.dataSource.filter.length > 0) {
       dataToManage = this.dataSource.filteredData;
@@ -148,11 +141,11 @@ export class TodoListOverviewComponent implements OnInit, OnDestroy {
         const isAsc = sort.direction === 'asc';
         switch (sort.active) {
           case 'status':
-            return this.compare(a.status, b.status, isAsc);
+            return compare(a.status, b.status, isAsc);
           case 'title':
-            return this.compare(a.title, b.title, isAsc);
+            return compare(a.title, b.title, isAsc);
           case 'criticity':
-            return this.compare(a.criticity, b.criticity, isAsc);
+            return compare(a.criticity, b.criticity, isAsc);
           default:
             return 0;
         }
@@ -176,4 +169,8 @@ export class TodoListOverviewComponent implements OnInit, OnDestroy {
   public goToCreateTaskView() {
     this.router.navigate(['/dashboard/create']);
   }
+}
+
+function compare(a, b, isAsc) {
+  return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
 }

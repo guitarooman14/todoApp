@@ -6,7 +6,6 @@ import {Subscription} from 'rxjs';
 import {Store} from '@ngrx/store';
 import {TodoListModule} from '@Actions/todo-list.action';
 import {AppState} from '@StoreConfig';
-import {AbstractTodoService} from '@Services/get-data/abstract-todo.service';
 
 @Component({
   selector: 'app-main-view',
@@ -18,8 +17,7 @@ export class MainViewComponent implements OnInit, OnDestroy {
   @ViewChild('tabGroup') tabGroup: MatTabGroup;
   private switchLanguageSubscription: Subscription;
 
-  constructor(private todoService: AbstractTodoService,
-              private translate: TranslateService,
+  constructor(private translate: TranslateService,
               private store: Store<AppState>,
               iconRegistry: MatIconRegistry,
               sanitizer: DomSanitizer) {

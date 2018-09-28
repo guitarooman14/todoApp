@@ -2,7 +2,7 @@ import {inject, TestBed} from '@angular/core/testing';
 
 import {MockedTodoService} from './mocked-todo.service';
 import {Subscription} from 'rxjs';
-import {ITodoListModel} from '../../business/store/models/i-todolist-model';
+import {ITodoListModel} from '@Models/i-todolist-model';
 
 describe('MockedTodoService', () => {
   let retrieveDataSubscription: Subscription;

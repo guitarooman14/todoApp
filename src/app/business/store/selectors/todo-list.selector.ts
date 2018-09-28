@@ -3,6 +3,9 @@ import {AppState} from '@StoreConfig';
 
 export const selectTodoListState$ = (state: AppState) => state.tasks;
 
+export const selectTodoListData$ =
+ createSelector(selectTodoListState$, (tasks) => tasks.data);
+
 export  const  selectTodosLoading$ =
   createSelector(selectTodoListState$, ( tasks ) =>  tasks.loading);
 

@@ -12,21 +12,33 @@ import {TranslateCompiler, TranslateLoader, TranslateModule, TranslateService} f
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {TodoListOverviewComponent} from './components/todo-list-overview/todo-list-overview.component';
 import {
-  MatButtonModule, MatButtonToggleModule, MatCheckboxModule, MatFormFieldModule, MatIconModule, MatInputModule, MatMenuModule,
-  MatPaginatorIntl, MatPaginatorModule, MatProgressBarModule, MatSelectModule, MatSortModule, MatTableModule, MatToolbarModule
+  MatButtonModule,
+  MatButtonToggleModule,
+  MatCheckboxModule,
+  MatFormFieldModule,
+  MatIconModule,
+  MatInputModule,
+  MatMenuModule,
+  MatPaginatorIntl,
+  MatPaginatorModule,
+  MatProgressBarModule,
+  MatSelectModule,
+  MatSortModule,
+  MatTableModule,
+  MatToolbarModule
 } from '@angular/material';
 import {CriticityPipe} from './pipes/criticity/criticity.pipe';
 import {MESSAGE_FORMAT_CONFIG, TranslateMessageFormatCompiler} from 'ngx-translate-messageformat-compiler';
-import {AbstractTodoService} from './services/get-data/abstract-todo.service';
-import {TodoService} from './services/get-data/todo.service';
-import {MockedTodoService} from './services/get-data/mocked-todo.service';
+import {AbstractTodoService} from '@Services/get-data/abstract-todo.service';
+import {TodoService} from '@Services/get-data/todo.service';
+import {MockedTodoService} from '@Services/get-data/mocked-todo.service';
 import {MatPaginatorIntlCro} from './business/mat-paginator-customized-label';
 import {CreateOrModifyTasksComponent} from './components/create-or-modify-tasks/create-or-modify-tasks-view.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NotFoundTaskComponent} from './components/not-found-task/not-found-task.component';
 import {environment} from '../environments/environment';
 import {StoreModule} from '@ngrx/store';
-import {appEffects, getReducers, REDUCER_TOKEN} from './business/store';
+import {appEffects, getReducers, REDUCER_TOKEN} from '@StoreConfig';
 import {EffectsModule} from '@ngrx/effects';
 import {IsTodosLoadedGuard} from '@Services/guards/is-todos-loaded.guard';
 
@@ -46,7 +58,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   imports: [
     BrowserModule,
     MatTabsModule,
-    RouterModule.forRoot(ROUTES, {enableTracing: true}),
+    RouterModule.forRoot(ROUTES, { enableTracing: true }),
     BrowserAnimationsModule,
     HttpClientModule,
     MatTableModule,
@@ -65,6 +77,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatProgressBarModule,
     FormsModule,
     StoreModule.forRoot(REDUCER_TOKEN),
+    environment.devTools,
     EffectsModule.forRoot(appEffects),
     TranslateModule.forRoot({
       compiler: {
@@ -84,7 +97,7 @@ export function HttpLoaderFactory(http: HttpClient) {
       useFactory: getReducers
     },
     {
-      provide: MESSAGE_FORMAT_CONFIG, useValue: {locales: ['en', 'fr']}
+      provide: MESSAGE_FORMAT_CONFIG, useValue: { locales: ['en', 'fr'] }
     },
     {
       provide: AbstractTodoService,

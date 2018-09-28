@@ -8,7 +8,7 @@ export class MatPaginatorIntlCro extends MatPaginatorIntl {
   previousPageLabel: string;
   onLabel: string;
 
-  getRangeLabel = (page, pageSize, length): string => {
+  public getRangeLabel = (page, pageSize, length): string => {
     if (length === 0 || pageSize === 0) {
       return '0 ' + this.onLabel + ' ' + length;
     }
@@ -21,7 +21,7 @@ export class MatPaginatorIntlCro extends MatPaginatorIntl {
     return startIndex + 1 + ' - ' + endIndex + ' ' + this.onLabel + ' ' + length;
   }
 
-  injectTranslateService(translate: TranslateService) {
+  public injectTranslateService(translate: TranslateService) {
     this.translate = translate;
     this.translateLabels();
 

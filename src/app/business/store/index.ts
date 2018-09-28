@@ -1,8 +1,8 @@
-import { ActionReducerMap } from '@ngrx/store';
-import { InjectionToken } from '@angular/core';
+import {ActionReducerMap} from '@ngrx/store';
+import {InjectionToken} from '@angular/core';
 
-import { todosReducer } from './reducers/todo-list.reducer';
-import {ITodoListState} from './models/i-todolist-model';
+import {todosReducer} from '@Reducers/todo-list.reducer';
+import {ITodoListState} from '@Models/i-todolist-model';
 import {TodoListEffects} from './effects/todo-list.effect';
 
 // Root reducer

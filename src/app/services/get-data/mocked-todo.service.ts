@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {AbstractTodoService} from './abstract-todo.service';
 import {Observable, of} from 'rxjs';
-import {Criticity, ITodoListModel} from '../../business/store/models/i-todolist-model';
+import {Criticity, ITodoListModel} from '@Models/i-todolist-model';
 
 @Injectable({
   providedIn: 'root'

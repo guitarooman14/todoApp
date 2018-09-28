@@ -15,7 +15,7 @@ export class TodoService extends AbstractTodoService {
 
   listTask(): Observable<ITodoListModel[]> {
     // check render with 5s delay
-    // return timer(5000).pipe(switchMap(() => this.http.get<ITodoListModel[]>('assets/data/tasks.json')));
+    // return timer(2000).pipe(switchMap(() => this.http.get<ITodoListModel[]>('assets/data/tasks.json')));
     return this.http.get<ITodoListModel[]>('assets/data/tasks.json');
   }
 }

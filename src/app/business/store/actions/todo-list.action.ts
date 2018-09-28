@@ -1,5 +1,5 @@
 import {Action} from '@ngrx/store';
-import {ITodoListModel, ITodoListState} from '../models/i-todolist-model';
+import {ITodoListModel} from '@Models/i-todolist-model';
 
 export namespace TodoListModule {
 

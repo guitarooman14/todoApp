@@ -1,8 +1,8 @@
-import {ITodoListState} from '../models/i-todolist-model';
-import {TodoListModule} from '../actions/todo-list.action';
+import {ITodoListState} from '@Models/i-todolist-model';
+import {TodoListModule} from '@Actions/todo-list.action';
 
 const initialState: ITodoListState = {
-  data: [],
+  data: null,
   loading: false,
   loaded: false
 };
