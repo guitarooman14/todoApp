@@ -18,13 +18,13 @@ export class CriticityPipe implements PipeTransform {
         resultat = this.translateService.instant('UrgentCriticity');
         break;
       case Criticity.HIGH:
-        resultat = this.translateService.instant('HighCriticty');
+        resultat = this.translateService.instant('HighCriticity');
         break;
       case Criticity.NORMAL:
-        resultat = this.translateService.instant('NormalCriticty');
+        resultat = this.translateService.instant('NormalCriticity');
         break;
       case Criticity.LOW:
-        resultat = this.translateService.instant('LowCriticty');
+        resultat = this.translateService.instant('LowCriticity');
         break;
     }
     return resultat;

@@ -1,18 +1,36 @@
-import {ITodoListState} from '@Models/i-todolist-model';
+import {ITodoListModel, TodoListStateEntity} from '@Models/i-todolist-model';
 import {TodoListModule} from '@Actions/todo-list.action';
+import {createEntityAdapter, EntityAdapter} from '@ngrx/entity';
 
-const initialState: ITodoListState = {
-  data: null,
+export const TodoListAdapter: EntityAdapter<ITodoListModel> = createEntityAdapter<ITodoListModel>({
+  sortComparer: false
+});
+
+const initialState: TodoListStateEntity = TodoListAdapter.getInitialState({
   loading: false,
-  loaded: false
-};
+  loaded: false,
+  logs: undefined
+});
+
+export const {
+  // select the array of task ids
+  selectIds: selectTasksIds,
+  // select the dictionary of task entities
+  selectEntities: selectTasksEntities,
+  // select the array of task
+  selectAll: selectTasks,
+  // select the total task count
+  selectTotal: selectTotalTasks
+} = TodoListAdapter.getSelectors();
 
 export function todosReducer(
-  state: ITodoListState = initialState,
+  state = initialState,
   action: TodoListModule.Actions
-): ITodoListState {
+): TodoListStateEntity {
 
   switch (action.type) {
+    // Load all tasks
+
     case TodoListModule.ActionTypes.LOAD_INIT_TASKS:
       // Passe le loading a true
       return {
@@ -24,30 +42,55 @@ export function todosReducer(
       // Bind state.data avec les todos du server
       // Passe le loaded a true et le loading a false
       return {
-        ...state,
+        ...TodoListAdapter.addMany(action.payload, state),
         loading: false,
-        loaded: true,
-        data: action.payload
+        loaded: true
       };
 
-    case TodoListModule.ActionTypes.ERROR_INIT_TASKS:
-      // Error rend le loading a false
+    // Create a new task
+
+    case TodoListModule.ActionTypes.LOAD_ADD_TASK :
       return {
         ...state,
-        loading: false
+        loading: true
       };
-    case TodoListModule.ActionTypes.ADD_TASK :
+    case TodoListModule.ActionTypes.SUCCESS_ADD_TASK :
       return {
-        ...state,
-        data: [
-          ...state.data,
-          action.payload
-        ]
+        ...TodoListAdapter.addOne(action.payload, state),
+        loading: false,
+        logs: { type: 'SUCCESS', messageLabel: 'NewTaskAddedNotification' }
       };
-    case TodoListModule.ActionTypes.REMOVE_TASK :
+
+    // Update an existing task
+
+    case TodoListModule.ActionTypes.LOAD_UPDATE_TASK:
       return {
         ...state,
-        data : state.data.filter(task => task.id !== action.payload)
+        loading: true
+      };
+    case TodoListModule.ActionTypes.SUCCESS_UPDATE_TASK:
+      const { id, ...changes } = action.payload;
+      return {
+        ...TodoListAdapter.updateOne({id: id, changes: changes}, state),
+        loading: false,
+        logs: { type: 'SUCCESS', messageLabel: 'TaskUpdatedNotification' }
+      };
+    case TodoListModule.ActionTypes.LOAD_REMOVE_TASK :
+      return {
+        ...state,
+        loading: true
+      };
+    case TodoListModule.ActionTypes.SUCCESS_REMOVE_TASK :
+      return {
+        ...TodoListAdapter.removeOne(action.payload, state),
+        loading: false,
+        logs: { type: 'SUCCESS', messageLabel: 'TaskRemovedNotification' }
+      };
+    case TodoListModule.ActionTypes.LOAD_ERROR_ACTION :
+      return {
+        ...state,
+        loading: false,
+        logs: { type: 'ERROR', messageLabel: action.payload.message },
       };
     default:
       return state;

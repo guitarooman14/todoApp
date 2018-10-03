@@ -1,9 +1,9 @@
 import {ActionReducerMap} from '@ngrx/store';
 import {InjectionToken} from '@angular/core';
 
-import {todosReducer} from '@Reducers/todo-list.reducer';
-import {ITodoListState} from '@Models/i-todolist-model';
 import {TodoListEffects} from './effects/todo-list.effect';
+import {TodoListStateEntity} from '@Models/i-todolist-model';
+import {todosReducer} from '@Reducers/todo-list.reducer';
 
 // Root reducer
 const reducers = {
@@ -13,7 +13,7 @@ const reducers = {
 export const appEffects = [TodoListEffects];
 
 export interface AppState {
-  tasks: ITodoListState;
+  tasks: TodoListStateEntity;
 }
 // Mandatory for AOT
 export function getReducers() {

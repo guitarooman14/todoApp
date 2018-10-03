@@ -41,6 +41,7 @@ import {StoreModule} from '@ngrx/store';
 import {appEffects, getReducers, REDUCER_TOKEN} from '@StoreConfig';
 import {EffectsModule} from '@ngrx/effects';
 import {IsTodosLoadedGuard} from '@Services/guards/is-todos-loaded.guard';
+import {ToastrModule} from 'ngx-toastr';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -76,6 +77,10 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatInputModule,
     MatProgressBarModule,
     FormsModule,
+    ToastrModule.forRoot({
+      'newestOnTop': false,
+      'positionClass': 'toast-bottom-center'
+    }),
     StoreModule.forRoot(REDUCER_TOKEN),
     environment.devTools,
     EffectsModule.forRoot(appEffects),
@@ -111,8 +116,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         return service;
       },
       deps: [TranslateService]
-    }
-    ,
+    },
     IsTodosLoadedGuard
   ],
   bootstrap: [AppComponent]

@@ -1,11 +1,14 @@
-import {Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
-import {MatIconRegistry, MatTabGroup} from '@angular/material';
+import {MatIconRegistry} from '@angular/material';
 import {DomSanitizer} from '@angular/platform-browser';
-import {Subscription} from 'rxjs';
-import {Store} from '@ngrx/store';
+import {Observable, Subscription} from 'rxjs';
+import {select, Store} from '@ngrx/store';
 import {TodoListModule} from '@Actions/todo-list.action';
 import {AppState} from '@StoreConfig';
+import {selectTodosLogs$} from '@Selectors/todo-list.selector';
+import {tap} from 'rxjs/operators';
+import {ToastrService} from 'ngx-toastr';
 
 @Component({
   selector: 'app-main-view',
@@ -14,11 +17,12 @@ import {AppState} from '@StoreConfig';
   encapsulation: ViewEncapsulation.None
 })
 export class MainViewComponent implements OnInit, OnDestroy {
-  @ViewChild('tabGroup') tabGroup: MatTabGroup;
+  public todoListErrors$: Observable<any>;
   private switchLanguageSubscription: Subscription;
 
   constructor(private translate: TranslateService,
               private store: Store<AppState>,
+              private toastr: ToastrService,
               iconRegistry: MatIconRegistry,
               sanitizer: DomSanitizer) {
     translate.setDefaultLang('fr');
@@ -38,6 +42,22 @@ export class MainViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.todoListErrors$ = this.store.pipe(
+      select(selectTodosLogs$),
+      tap((dialog: {type: string, messageLabel: string}) => {
+        if (!dialog) {
+          return;
+        }
+        const messageToDisplay: string = this.translate.instant(dialog.messageLabel);
+        if (dialog.type === 'ERROR') {
+          this.toastr.error(messageToDisplay);
+        } else {
+          this.toastr.success(messageToDisplay);
+        }
+        console.log(dialog);
+      })
+    );
+    this.todoListErrors$.subscribe();
     this.store.dispatch(new TodoListModule.LoadInitTasks());
   }
 

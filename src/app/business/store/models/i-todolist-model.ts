@@ -1,3 +1,5 @@
+import {EntityState} from '@ngrx/entity';
+
 export interface ITodoListModel {
   id: number;
   status: boolean;
@@ -6,10 +8,13 @@ export interface ITodoListModel {
   criticity: Criticity;
 }
 
-export interface ITodoListState {
-  data: ITodoListModel[];
+export interface TodoListStateEntity extends EntityState<ITodoListModel> {
   loading: boolean;
   loaded: boolean;
+  logs: {
+    type: string;
+    messageLabel: string;
+  };
 }
 
 export enum Criticity {

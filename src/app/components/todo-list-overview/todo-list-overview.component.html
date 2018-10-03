@@ -84,7 +84,7 @@
             <button (click)="goToCreateTaskView()" mat-raised-button color="primary">{{ 'AddNewTaskLabel' | translate}}
             </button>
             <mat-paginator #paginator
-                           [length]="dataSource?.data.length"
+                           [length]="dataSource.data.length"
                            [pageIndex]="0"
                            [pageSize]="5"
                            [pageSizeOptions]="[5, 10, 20, 50]">
@@ -93,7 +93,7 @@
         
           <footer id="todo-app-task-counter">
             <h4 id="todo-app-task-counter-content" translate
-                [translateParams]="{count: dataSource?.data.length}">TaskCounterLabel</h4>
+                [translateParams]="{count: dataSource.data.length}">TaskCounterLabel</h4>
           </footer>
         </div>
   </ng-template>

@@ -7,9 +7,9 @@
   "TodoListTableThirdCol": "Criticity",
   "TodoListTableFourthCol": "Actions",
   "UrgentCriticity": "Immediately",
-  "HighCriticty": "High",
-  "NormalCriticty": "Normal",
-  "LowCriticty": "Low",
+  "HighCriticity": "High",
+  "NormalCriticity": "Normal",
+  "LowCriticity": "Low",
   "DisplayAllTasks": "All tasks",
   "DisplayToDo": "To do",
   "DisplayComplete": "Complete",
@@ -29,5 +29,8 @@
   "AddNewTaskLabel": "Add a new task",
   "ModifyTaskLabel": "Modify this task",
   "TaskNotFound": "The task you're looking for doesn't exist",
-  "LoadingTodoList": "loading tasks in progress"
+  "LoadingTodoList": "loading tasks in progress",
+  "NewTaskAddedNotification": "The task has been successfully added",
+  "TaskUpdatedNotification": "The task has been successfully updated",
+  "TaskRemovedNotification": "The task has been successfully removed"
 }

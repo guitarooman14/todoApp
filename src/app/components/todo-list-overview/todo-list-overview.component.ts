@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {MatPaginator, MatSort, MatTableDataSource, Sort} from '@angular/material';
 import {SelectionModel} from '@angular/cdk/collections';
 import {Observable, Subscription} from 'rxjs';
@@ -18,7 +18,7 @@ import {filterEmpty} from '../../shared/utils/custom-operator';
   animations: [visibilityChangedTransition, fadeInAnimation],
   encapsulation: ViewEncapsulation.None
 })
-export class TodoListOverviewComponent implements OnInit, OnDestroy {
+export class TodoListOverviewComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   public displayedColumns: string[] = ['status', 'title', 'criticity', 'action'];
@@ -31,9 +31,14 @@ export class TodoListOverviewComponent implements OnInit, OnDestroy {
   private isLoadingSubscription: Subscription;
 
   constructor(private router: Router,
-    private store: Store<AppState>) {
+              private store: Store<AppState>) {
     this.tasksLoading = this.store.pipe(select(selectTodosLoading$));
     this.toDoListItemsWithRedux = this.store.pipe(filterEmpty(), select(selectTodoListData$));
+  }
+
+  public ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   public ngOnInit(): void {
@@ -118,7 +123,7 @@ export class TodoListOverviewComponent implements OnInit, OnDestroy {
   }
 
   public deleteRowDataTable(itemId: number) {
-    this.store.dispatch(new TodoListModule.RemoveTask(itemId));
+    this.store.dispatch(new TodoListModule.LoadRemoveTask(itemId));
     // We have to navigate to previous page if we are going to delete the last row of the current page
     if (this.dataSource.paginator.hasPreviousPage() && this.dataSource.paginator.pageSize === 1) {
       this.dataSource.paginator.previousPage();

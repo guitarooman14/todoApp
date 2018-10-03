@@ -32,7 +32,7 @@ export class CreateOrModifyTasksComponent implements OnInit, OnDestroy {
   private toDoListItems: ITodoListModel[];
   private viewMode: ViewType;
   private titleRequiredErrorLabel: string;
-  private critictyRequiredErrorLabel: string;
+  private criticityRequiredErrorLabel: string;
 
   constructor(private translate: TranslateService,
     private formBuilder: FormBuilder,
@@ -48,7 +48,7 @@ export class CreateOrModifyTasksComponent implements OnInit, OnDestroy {
     this.createModifyForm = this.formBuilder.group({
       title: this.title,
       description: this.description,
-      criticty: this.criticity
+      criticity: this.criticity
     });
     this.translate.onLangChange.subscribe(() => {
       this.translateLabels(type);
@@ -99,7 +99,7 @@ export class CreateOrModifyTasksComponent implements OnInit, OnDestroy {
     if (controlName && controlName === 'title') {
       resultat = this.title.hasError('required') ? this.titleRequiredErrorLabel : '';
     } else if (controlName && controlName === 'criticity') {
-      resultat = this.criticity.hasError('required') ? this.critictyRequiredErrorLabel : '';
+      resultat = this.criticity.hasError('required') ? this.criticityRequiredErrorLabel : '';
     }
     return resultat;
   }
@@ -111,7 +111,7 @@ export class CreateOrModifyTasksComponent implements OnInit, OnDestroy {
       this.createOrModifybuttonLabel = this.translate.instant('ModifyTaskLabel');
     }
     this.titleRequiredErrorLabel = this.translate.instant('TitleRequiredErrorLabel');
-    this.critictyRequiredErrorLabel = this.translate.instant('CriticityRequiredErrorLabel');
+    this.criticityRequiredErrorLabel = this.translate.instant('CriticityRequiredErrorLabel');
   }
 
   public submit() {
@@ -122,21 +122,21 @@ export class CreateOrModifyTasksComponent implements OnInit, OnDestroy {
 
     if (this.viewMode === ViewType.CREATE) {
       const newTask: ITodoListModel = {
-        id: Utils.getNextIdNotUsed(this.toDoListItems.map((item: ITodoListModel) => item.id)),
+        id: getNextIdNotUsed(this.toDoListItems.map((item: ITodoListModel) => item.id)),
         status: false,
         title: this.title.value,
         description: this.description.value,
         criticity: +this.criticity.value
       };
-      this.store.dispatch(new TodoListModule.AddTask(newTask));
+      this.store.dispatch(new TodoListModule.LoadAddTask(newTask));
     } else {
       const id = this.route.snapshot.paramMap.get('id');
-      const task: ITodoListModel = this.toDoListItems.find((item: ITodoListModel) => {
+      const selectedTask: ITodoListModel = this.toDoListItems.find((item: ITodoListModel) => {
         return item.id === +id;
       });
-      task.criticity = +this.criticity.value;
-      task.description = this.description.value;
-      task.title = this.title.value;
+      const payload = Object.assign(selectedTask, this.createModifyForm.value);
+      payload.criticity = +payload.criticity;
+      this.store.dispatch(new TodoListModule.LoadUpdateTask(payload));
     }
     // We have to use the formGroupDirective in order to
     // remove all controls data and invalid status
@@ -145,6 +145,10 @@ export class CreateOrModifyTasksComponent implements OnInit, OnDestroy {
     }
     this.router.navigate(['/dashboard']);
   }
+}
+
+function getNextIdNotUsed(existingIds: number[]): number {
+  return Math.max.apply(null, existingIds) + 1;
 }
 
 enum ViewType {

@@ -4,7 +4,7 @@ import {AppState} from '@StoreConfig';
 
 export const filterEmpty: () => OperatorFunction<any, any> = () => filter((v: AppState) => {
   let res = false;
-  if (v != null && v.tasks.data != null) {
+  if (v != null && v.tasks.entities != null) {
     res = true;
   }
   return res;

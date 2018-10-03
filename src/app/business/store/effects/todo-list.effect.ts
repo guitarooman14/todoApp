@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
-import { map, switchMap } from 'rxjs/operators';
-import { TodoListModule } from '@Actions/todo-list.action';
+import {Injectable} from '@angular/core';
+import {map, switchMap} from 'rxjs/operators';
+import {TodoListModule} from '@Actions/todo-list.action';
 import {Observable, of} from 'rxjs';
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import {TodoService} from '@Services/get-data/todo.service';
@@ -25,8 +25,29 @@ export  class  TodoListEffects {
 
       // Si le resolve n'a pas abouti, il passe dans la fonction catchError
       // Qui renvoie l'action ErrorInitTasks
-      catchError(() => of(new TodoListModule.ErrorInitTasks()))
-);
+      catchError((err) => of(new TodoListModule.ErrorAction(err)))
+  );
+
+  @Effect() LoadCreateTodo$: Observable<TodoListModule.Actions> = this.actions$
+  .pipe(
+    ofType<TodoListModule.LoadAddTask>(TodoListModule.ActionTypes.LOAD_ADD_TASK),
+    map(action => new TodoListModule.SuccessAddTask(action.payload)),
+    catchError((err) => of(new TodoListModule.ErrorAction(err)))
+  );
+
+  @Effect() LoadUpdateTodo$: Observable<TodoListModule.Actions> = this.actions$
+  .pipe(
+    ofType<TodoListModule.LoadUpdateTask>(TodoListModule.ActionTypes.LOAD_UPDATE_TASK),
+    map(action => new TodoListModule.SuccessUpdateTask(action.payload)),
+    catchError((err) => of(new TodoListModule.ErrorAction(err)))
+  );
+
+  @Effect() LoadRemoveTodo$: Observable<TodoListModule.Actions> = this.actions$
+  .pipe(
+    ofType<TodoListModule.LoadRemoveTask>(TodoListModule.ActionTypes.LOAD_REMOVE_TASK),
+    map(action => new TodoListModule.SuccessRemoveTask(action.payload)),
+    catchError((err) => of(new TodoListModule.ErrorAction(err)))
+  );
 
   constructor(
     private todoListService: TodoService,
