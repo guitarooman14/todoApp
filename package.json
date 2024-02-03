@@ -29,7 +29,7 @@
     "@ngx-translate/core": "^10.0.2",
     "@ngx-translate/http-loader": "^3.0.1",
     "core-js": "^2.5.4",
-    "messageformat": "^2.0.4",
+    "messageformat": "^2.3.0",
     "ngx-toastr": "^9.1.0",
     "ngx-translate-messageformat-compiler": "^4.3.0",
     "rxjs": "^6.0.0",
